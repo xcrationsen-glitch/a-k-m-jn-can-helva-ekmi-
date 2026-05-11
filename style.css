@@ -1,270 +1,169 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", Arial, sans-serif;
-}
+const title = document.getElementById("title");
+const text = document.getElementById("text");
+const nextBtn = document.getElementById("nextBtn");
 
-body {
-  min-height: 100vh;
-  overflow: hidden;
-  color: white;
-  background: #ff9ecb;
-}
+const proposal = document.getElementById("proposal");
+const yesBtn = document.getElementById("yesBtn");
+const thinkBtn = document.getElementById("thinkBtn");
+const thinkMessage = document.getElementById("thinkMessage");
 
-.background {
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.45), transparent 25%),
-    radial-gradient(circle at 80% 30%, rgba(255,182,218,0.65), transparent 30%),
-    radial-gradient(circle at 50% 90%, rgba(180,120,255,0.35), transparent 35%),
-    linear-gradient(135deg, #ffb6d9, #ff8fbd, #cfa7ff);
-  animation: bgMove 8s ease-in-out infinite alternate;
-  z-index: -3;
-}
+const finalBox = document.getElementById("final");
+const flowersBox = document.getElementById("flowers");
 
-@keyframes bgMove {
-  from {
-    filter: hue-rotate(0deg);
-    transform: scale(1);
+let step = 0;
+let thinkCount = 0;
+let yesScale = 1;
+
+const texts = [
+  {
+    title: "Azra, sakin ol panik yok 😅",
+    text: "Bu site virüs falan değil, sadece biraz utanmış bir insan çalışması."
+  },
+  {
+    title: "Bunu WhatsApp’tan yazsam çok düz olacaktı.",
+    text: "Ben de dedim ki: biraz çiçek, biraz kalp, biraz da rezillik ekleyelim."
+  },
+  {
+    title: "Şu an büyük ihtimalle 'bu ne' diyorsun.",
+    text: "Haklısın. Ben de yaparken aynı şeyi dedim."
+  },
+  {
+    title: "Neyse, uzatmadan konuya giriyorum...",
+    text: "Çünkü birazdan aşırı ciddiymiş gibi yapıp yine bozacağım."
+  }
+];
+
+const thinkMessages = [
+  "Emin misin Azra? Bak bu butonun da duyguları var 🌸",
+  "Bir daha düşün bence, kabul butonu arkada spor yapıyor şu an.",
+  "Tamam baskı yok... ama site biraz taraf tutuyor olabilir 😅",
+  "Bak kabul butonu büyüdü, artık olay kontrolden çıkıyor.",
+  "Son karar mı? Bu buton birazdan istifa edecek haberin olsun.",
+  "Tamamdır... düşüneyim butonu mesleği bırakıyor."
+];
+
+nextBtn.addEventListener("click", () => {
+  if (step < texts.length) {
+    title.classList.remove("fade");
+    text.classList.remove("fade");
+
+    setTimeout(() => {
+      title.textContent = texts[step].title;
+      text.textContent = texts[step].text;
+
+      title.classList.add("fade");
+      text.classList.add("fade");
+
+      step++;
+
+      if (step === texts.length) {
+        nextBtn.textContent = "Tamam söyle artık 💗";
+      }
+    }, 100);
+
+    return;
   }
 
-  to {
-    filter: hue-rotate(12deg);
-    transform: scale(1.05);
+  title.style.display = "none";
+  text.style.display = "none";
+  nextBtn.style.display = "none";
+
+  proposal.classList.remove("hidden");
+  proposal.classList.add("fade");
+});
+
+yesBtn.addEventListener("click", () => {
+  proposal.classList.add("hidden");
+
+  finalBox.classList.remove("hidden");
+  finalBox.classList.add("fade");
+
+  createHearts();
+});
+
+thinkBtn.addEventListener("click", () => {
+  thinkMessage.textContent = thinkMessages[thinkCount] || "Tamam tamam, şaka maka cevabını rahatça söyleyebilirsin 🤍";
+
+  thinkMessage.classList.remove("fade");
+
+  setTimeout(() => {
+    thinkMessage.classList.add("fade");
+  }, 50);
+
+  yesScale += 0.13;
+  yesBtn.style.transform = `scale(${yesScale})`;
+
+  thinkBtn.style.transform = `translate(${randomMove()}px, ${randomMove()}px)`;
+
+  proposal.classList.remove("shake");
+
+  setTimeout(() => {
+    proposal.classList.add("shake");
+  }, 50);
+
+  createMiniFlowers();
+
+  thinkCount++;
+
+  if (thinkCount >= thinkMessages.length) {
+    thinkBtn.classList.add("pop-away");
+
+    setTimeout(() => {
+      thinkBtn.style.display = "none";
+      thinkMessage.textContent = "Şaka bir yana, ne düşünüyorsan dürüstçe söyle Azra. Sorun yok 🤍";
+      yesBtn.textContent = "Olur bence 💗";
+      createHearts();
+    }, 550);
   }
+});
+
+function randomMove() {
+  return Math.floor(Math.random() * 40) - 20;
 }
 
-.container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  position: relative;
-  z-index: 5;
+function createFlower() {
+  const flowers = ["🌸", "🌺", "🌷", "💮", "🌹"];
+
+  const flower = document.createElement("div");
+
+  flower.className = "flower";
+  flower.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+
+  flower.style.left = Math.random() * 100 + "vw";
+  flower.style.fontSize = 18 + Math.random() * 24 + "px";
+  flower.style.animationDuration = 4 + Math.random() * 5 + "s";
+  flower.style.opacity = 0.5 + Math.random() * 0.5;
+
+  flowersBox.appendChild(flower);
+
+  setTimeout(() => {
+    flower.remove();
+  }, 9000);
 }
 
-.card {
-  width: 100%;
-  max-width: 560px;
-  padding: 35px 28px;
-  text-align: center;
-  border-radius: 30px;
-  background: rgba(255, 255, 255, 0.22);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
-  animation: cardOpen 0.9s ease forwards;
-}
-
-@keyframes cardOpen {
-  from {
-    opacity: 0;
-    transform: translateY(35px) scale(0.92);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.small-title {
-  display: inline-block;
-  margin-bottom: 14px;
-  padding: 7px 14px;
-  font-size: 13px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.25);
-}
-
-h1 {
-  font-size: 34px;
-  margin-bottom: 18px;
-  text-shadow: 0 4px 14px rgba(0,0,0,0.25);
-}
-
-h2 {
-  font-size: 30px;
-  margin-bottom: 14px;
-  text-shadow: 0 4px 14px rgba(0,0,0,0.25);
-}
-
-p {
-  font-size: 18px;
-  line-height: 1.6;
-  margin-bottom: 24px;
-  text-shadow: 0 3px 12px rgba(0,0,0,0.2);
-}
-
-button {
-  border: none;
-  cursor: pointer;
-  font-weight: 800;
-  transition: 0.25s ease;
-}
-
-.main-btn,
-.yes-btn,
-.think-btn {
-  padding: 15px 25px;
-  border-radius: 999px;
-  font-size: 16px;
-}
-
-.main-btn {
-  background: white;
-  color: #ff4f97;
-  box-shadow: 0 10px 25px rgba(255,255,255,0.25);
-}
-
-.main-btn:hover {
-  transform: scale(1.06);
-}
-
-.buttons {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.yes-btn {
-  background: #ff3f8d;
-  color: white;
-  box-shadow: 0 12px 30px rgba(255,63,141,0.45);
-}
-
-.yes-btn:hover {
-  transform: scale(1.08);
-}
-
-.think-btn {
-  background: rgba(255,255,255,0.95);
-  color: #ff4f97;
-}
-
-.think-btn:hover {
-  transform: scale(1.04);
-}
-
-.think-message {
-  min-height: 44px;
-  margin-top: 20px;
-  margin-bottom: 0;
-  font-weight: 700;
-}
-
-.hidden {
-  display: none;
-}
-
-.fade {
-  animation: fade 0.6s ease;
-}
-
-@keyframes fade {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
+function createMiniFlowers() {
+  for (let i = 0; i < 8; i++) {
+    setTimeout(createFlower, i * 80);
   }
 }
 
-.flower {
-  position: fixed;
-  top: -60px;
-  z-index: 1;
-  pointer-events: none;
-  animation: fall linear forwards;
-}
+function createHearts() {
+  for (let i = 0; i < 35; i++) {
+    const heart = document.createElement("div");
 
-@keyframes fall {
-  to {
-    transform: translateY(115vh) rotate(360deg);
-    opacity: 0.2;
+    heart.className = "heart";
+    heart.textContent = "💗";
+
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = 18 + Math.random() * 30 + "px";
+    heart.style.animationDuration = 2 + Math.random() * 1.5 + "s";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+      heart.remove();
+    }, 3500);
   }
 }
 
-.heart {
-  position: fixed;
-  bottom: -40px;
-  z-index: 10;
-  pointer-events: none;
-  animation: flyHeart 2.5s ease-out forwards;
-}
-
-@keyframes flyHeart {
-  to {
-    transform: translateY(-110vh) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-.pop-away {
-  animation: popAway 0.55s ease forwards;
-}
-
-@keyframes popAway {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  60% {
-    transform: scale(1.4) rotate(5deg);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scale(0);
-    opacity: 0;
-  }
-}
-
-.big-heart {
-  font-size: 80px;
-  margin-bottom: 15px;
-  animation: pulse 1.1s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.18);
-  }
-}
-
-@media (max-width: 500px) {
-  .card {
-    padding: 28px 20px;
-  }
-
-  h1 {
-    font-size: 28px;
-  }
-
-  h2 {
-    font-size: 25px;
-  }
-
-  p {
-    font-size: 16px;
-  }
-
-  .buttons {
-    flex-direction: column;
-  }
-}
+setInterval(createFlower, 350);
